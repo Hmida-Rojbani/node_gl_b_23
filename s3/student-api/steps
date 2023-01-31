@@ -1,0 +1,9 @@
+create a new folder
+open vscode in this folder
+open terminal
+inside the terminal execute :
+    " npm init " : to initialize the project
+    " npm i express " : to install Express JS
+add a new file index.js
+write the code inside index.js
+run the code from the terminal with " node index"

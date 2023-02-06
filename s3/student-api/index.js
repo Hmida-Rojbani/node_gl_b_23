@@ -1,5 +1,5 @@
 const express = require('express');
-const Joi = require('joi');
+const {student_schema , student_update_schema} = require('./models/student')
 const app = express();
 const port = 3000
 
@@ -10,17 +10,7 @@ let students = [
     {id:4, name:'student 4', class:'Class A'}
 ];
 
-let student_schema = Joi.object({
-    id : Joi.number().integer().positive(),
-    name: Joi.string().min(5).required(),
-    class : Joi.string().alphanum().min(3).max(10).required()
-});
 
-let student_update_schema = Joi.object({
-    id : Joi.number().integer().positive(),
-    name: Joi.string().min(5),
-    class : Joi.string().alphanum().min(3).max(10)
-});
 app.get('/api/students', (req, res) => {
   res.send(students);
 });

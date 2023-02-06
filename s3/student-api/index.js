@@ -15,6 +15,12 @@ let student_schema = Joi.object({
     name: Joi.string().min(5).required(),
     class : Joi.string().alphanum().min(3).max(10).required()
 });
+
+let student_update_schema = Joi.object({
+    id : Joi.number().integer().positive(),
+    name: Joi.string().min(5),
+    class : Joi.string().alphanum().min(3).max(10)
+});
 app.get('/api/students', (req, res) => {
   res.send(students);
 });
@@ -41,6 +47,10 @@ app.post('/api/students', function (req, res) {
 
 
 app.put('/api/students/:stdId', (req, res) => {
+    let validation_results= student_update_schema.validate(req.body);
+    if(validation_results.error)
+        return res.status(400).send(validation_results.error.message);
+    
     let student = students.find(std => std.id === parseInt(req.params.stdId));
     if(!student)
       return res.status(404).send('Student with given id not found.');

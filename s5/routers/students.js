@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { default: mongoose } = require('mongoose');
 const {Student} = require('../models/student');
 
 router.post('/',async (req, res) =>{
@@ -13,6 +14,8 @@ router.get('/',async (req, res) =>{
 })
 
 router.get('/id/:id',async (req, res) =>{
+    if(!mongoose.Types.ObjectId.isValid(req.params.id))
+        return res.status(400).send('Given ID is not an ObjectId')
     let student = await Student.findById(req.params.id);
     if(!student)
         return res.status(404).send('Student is not found')

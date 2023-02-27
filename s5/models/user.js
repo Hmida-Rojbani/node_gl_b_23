@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Joi = require('joi');
 Joi.objectid = require('joi-objectid')(Joi);
 const uniqueValidator = require('mongoose-unique-validator');
+const jwt = require('jsonwebtoken')
 
 const user_schema = new mongoose.Schema({
     name : {type:String, required : true},
@@ -10,7 +11,10 @@ const user_schema = new mongoose.Schema({
     isAdmin : { type: Boolean , default : false}
 })
 user_schema.plugin(uniqueValidator)
-
+user_schema.methods.generateAuthJWT = function () {
+    const token = jwt.sign({_id:this._id, name : this.name, isAdmin : this.isAdmin},'secret',{ expiresIn: '1h' });
+    return token;
+}
 const user_valid = Joi.object({
     name : Joi.string().min(4).required(),
     email : Joi.string().email().required(),

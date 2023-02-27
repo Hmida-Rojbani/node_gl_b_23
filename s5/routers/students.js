@@ -3,8 +3,10 @@ const  mongoose = require('mongoose');
 const {Student} = require('../models/student');
 const _ = require('lodash');
 const { ClassRoom } = require('../models/classroom');
+const auth = require('../middlewars/auth');
+const autoris = require('../middlewars/autoris');
 
-router.post('/',async (req, res) =>{
+router.post('/',auth,async (req, res) =>{
     let student = new Student(req.body);
     let validation_res = student.validate_body(req.body);
     if(validation_res.error)
@@ -61,7 +63,7 @@ router.get('/age/min/:min/max/:max',async (req, res) =>{
     res.status(200).setHeader('elements-number',students.length).send(students);
 });
 
-router.delete('/id/:id',async (req, res) =>{
+router.delete('/id/:id',[auth,autoris],async (req, res) =>{
     if(!mongoose.Types.ObjectId.isValid(req.params.id))
         return res.status(400).send('Given ID is not an ObjectId')
     let student = await Student.findByIdAndRemove(req.params.id);

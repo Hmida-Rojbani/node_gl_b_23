@@ -2,7 +2,7 @@
 const router = require('express').Router();
 const { User , user_validate_fun, user_login_validate_fun } = require('../models/user');
 const bcrypt = require('bcrypt')
-
+const auth = require('../middlewars/auth')
 router.get('', async (req,res)=>{
     const users = await User.find().select('-password');
     res.send(users);
@@ -33,7 +33,13 @@ router.post('/login', async (req,res)=>{
     if(!(user && await bcrypt.compare(user_login.password,user.password)))
         return res.status(400).send('Username or Password are incorrects');
 
-        res.send('User logged : '+ user.email);
+    const token = user.generateAuthJWT();
+        res.setHeader('Authorization','Bearer '+token).send('User logged : '+ user.email);
     
 });
+
+router.get('/me',auth,async (req,res)=>{
+    const user = await User.findById(req.user_token._id).select('-password');
+    res.send(user);
+})
 module.exports=router;

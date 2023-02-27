@@ -34,4 +34,20 @@ router.get('/not/active/size/:size/page/:page',async (req, res) =>{
                                 
     res.status(200).send(students);
 })
+// search via age between two limits
+//operators $eq $neq $in $nin $gt $gte $lt $lte
+router.get('/age/min/:min/max/:max',async (req, res) =>{
+    let students = await Student.find({age:{$gte : req.params.min, $lt : req.params.max}});
+    res.status(200).setHeader('elements-number',students.length).send(students);
+});
+
+router.delete('/id/:id',async (req, res) =>{
+    if(!mongoose.Types.ObjectId.isValid(req.params.id))
+        return res.status(400).send('Given ID is not an ObjectId')
+    let student = await Student.findByIdAndRemove(req.params.id);
+    if(!student)
+        return res.status(404).send('Student is not found')
+    res.status(200).send(student);
+})
+
 module.exports=router;

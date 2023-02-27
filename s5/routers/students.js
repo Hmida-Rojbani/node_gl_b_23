@@ -1,6 +1,7 @@
 const router = require('express').Router();
-const { default: mongoose } = require('mongoose');
+const  mongoose = require('mongoose');
 const {Student} = require('../models/student');
+const _ = require('lodash');
 
 router.post('/',async (req, res) =>{
     let student = new Student(req.body);
@@ -47,6 +48,17 @@ router.delete('/id/:id',async (req, res) =>{
     let student = await Student.findByIdAndRemove(req.params.id);
     if(!student)
         return res.status(404).send('Student is not found')
+    res.status(200).send(student);
+})
+
+router.put('/id/:id',async (req, res) =>{
+    if(!mongoose.Types.ObjectId.isValid(req.params.id))
+        return res.status(400).send('Given ID is not an ObjectId')
+    let student = await Student.findById(req.params.id);
+    if(!student)
+        return res.status(404).send('Student is not found')
+    student = _.merge(student,req.body);
+    await student.save();
     res.status(200).send(student);
 })
 
